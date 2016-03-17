@@ -1,0 +1,55 @@
+
+#input {
+    margin: 15px 0 5px 20px;
+    width: 83%;
+    height: 35px;
+    font-size: 17px;
+    font-family: helvetica, sans-serif;
+    color: #9D9D9D;
+    border: none;
+    -webkit-box-shadow: 2px 2px 5px #9D9D9D;
+    outline: none;
+}
+
+#search-container {
+    position: absolute;
+    z-index: 3; 
+}
+
+#search-nav {
+    width: 280px;
+    max-height: 549px;
+    background-color: rgba(256,256,256,.6);
+    border: solid 2px green;
+    overflow: hidden;
+}
+#search-nav ul li img{
+float: right;
+}
+
+#scroller {
+    max-height: 480px;
+    overflow: scroll;
+    margin: 0 5px;
+}
+
+#arrow {
+    height: 50px;
+    width: 50px;
+}
+
+#arrow-container {
+    background-color: green;
+    opacity: 0.9;
+    max-width: 50px;
+    border-radius: 50%;
+}
+
+.web-links {
+    color: blue;
+}
+
+.web-links:visited {
+    color: blue;
+}
+
