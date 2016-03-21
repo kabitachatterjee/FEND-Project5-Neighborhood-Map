@@ -13,7 +13,7 @@
         p {font-size: 12px; margin: 5px 0;}
         strong {font-size: 14px;}
         ul {list-style-type: none; padding-left: 0; margin-bottom: 0;}
-        li {font-family: Helvetica, sans-serif; padding: 20px 0 15px 15px;}
+        li {font-family: Helvetica, sans-serif; padding: 20px 0 15px 20px;}
         li:hover {background-color: #7D7D7D; color: white;}
         a {text-decoration: none; color: #7D7D7D;}
         hr { margin: 10px 0 0 0; color: green; border-color: green;}
@@ -24,28 +24,28 @@
     <div id="map-canvas"></div>
     <div id="search-container">
         <div id="search-nav">    
-            <input id="input" placeholder="Search…" type="input" data-bind="textInput: query, valueUpdate: 'keydown'" autocomplete="off"></input>
+            <input id="input" placeholder="Search…" data-bind="textInput: query, valueUpdate: 'keydown'" autocomplete="off"></input>
             <div id="scroller">
                 <ul  data-bind="template: {name: 'marker', foreach:loc}">
                 </ul>
                 <script type="text/html" id="marker">
                     <div data-bind="visible: visible">
-                        <a href="#" data-bind="attr: {id: id}" >
-                            <li>
+                        <a href="#" data-bind="attr: {id: id}">
+                            <li data-bind = "click:$parent.clickOpenMap">
                                 <strong data-bind="text: name"></strong>
+                                <span><img height="40" width="40" data-bind="attr: {src: image}"></img><span>
                                 <p data-bind="text: state"></p>
-                                <img height="40" width="40" data-bind="attr: {src: image}"></img>
-                                
-                            </li>
-                        </a>
+                                </li>
+                            </a>
                     </div>
                 </script>    
             </div>
         </div> 
         <div id="arrow-container">
             <img id="arrow" src="img/up-arrow.gif" alt="arrow image">
-        </div>  
-        </div>
+        </div> 
+         </div>
+
     
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUkUqR2r2dfMNgribh4X8XjorobxHTMYA&callback=initMap">

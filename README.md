@@ -5,7 +5,7 @@ Download the repo and run the Maps.html file in your browser.
 Please enable the plug-in <strong>Cross origin resource sharing</strong> in chrome browser.
 
 Basic Description
-This project is SAP using Google Maps API to display a few National Parks in USA<br/>
+This project is using Google Maps API to display a few National Parks in USA<br/>
 The markers display the National Parks accross different states in the US<br/>
 <br/>
 <strong>Functionality of the page includes:</strong> <br/> 

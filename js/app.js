@@ -61,7 +61,7 @@
       new google.maps.event.addListener(loc[i].holdMarker, 'click', (function(marker, i) {
        
           return function() {
-            var airportUrl = "https://airport.api.aero/airport/nearest/"+loc[i].lat+"/"+loc[i].lng+"?user_key=b26562a6792b0ee4bc5c786291c86714";
+            var airportUrl = 'https://airport.api.aero/airport/nearest/'+loc[i].lat+'/'+loc[i].lng+'?user_key=b26562a6792b0ee4bc5c786291c86714';
 
              $.getJSON(airportUrl, function(data) {
        
@@ -89,44 +89,36 @@
             loc[i].picBoolTest = true;
             });
           }; 
-          
-      
-        })(loc[i].holdMarker, i));
-
-     
-      //Click nav element to view infoWindow
-     //zoom in and center location on click
-
-        var searchNav = $('#nav' + i);
-        var search = searchNav.selector;
-        console.log(search);
-        console.log(loc[i].name);
-        console.log(loc[i].holdMarker);
-        $('#search-nav').on('click', 'a', function(marker){
-                //console.log(id);
-                console.log(search);
-                console.log(marker);
-               // if(this.id == search){
-                return function(){
-                 var content = '<img height="250" width="350" src="' + loc[i].image + 
-                                    '" alt="Image of ' + loc[i].name + '"><br><hr style="margin-bottom: 5px"><strong>' + 
-                                    loc[i].name+ ', '+loc[i].state+'</strong><br><p>'+'<a class="web-links" href="'+loc[i].url+'" target="_blank">'+loc[i].url+
-                                    '</a>';
-            infowindow.setContent(content);
-            infowindow.open(map,marker);
-            map.setZoom(16);
-            map.setCenter(marker.position);
-            loc[i].picBoolTest = true;
-            console.log('done'); 
-           }  
-        });
+          })(loc[i].holdMarker, i));
 }
   
-      //Query through the different locations from nav bar with knockout.js
-    //only display markers and nav elements that match query result
+      //Click nav element to zoom in and center location on click
 var viewModel = {
     query: ko.observable(''),
+    clickOpenMap: function(marker){
+        $('#input').val('');
+        var position = new google.maps.LatLng(marker.lat, marker.lng) ;  
+        var marker = new google.maps.Marker({
+          position: position,
+          map: map,
+          title: marker.name,
+          icon: {
+            url: 'img/tree.png',
+            size: new google.maps.Size(100, 50),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(12.5, 40)
+            }
+        });
+    
+      
+    map.panTo(marker.position);
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+     setTimeout(function() {marker.setMap(null);
+     }, 1500);
+}
+    
 };
+
 
 viewModel.loc = ko.dependentObservable(function() {
     var self = this;
@@ -135,11 +127,9 @@ viewModel.loc = ko.dependentObservable(function() {
       if (marker.name.toLowerCase().indexOf(search) >= 0) {
             marker.boolTest = true;
             marker.visible = true;
-            
-             return marker.visible;
+            return marker.visible;
         } else {
             marker.boolTest = false;
-            
             marker.visible = false;
             return marker.visible;
         }
@@ -150,38 +140,39 @@ viewModel.loc = ko.dependentObservable(function() {
 ko.applyBindings(viewModel);
 });
 }
-     
-      //Hide and Show entire Nav/Search Bar on click
+   
+
+    //Hide and Show entire Nav/Search Bar on click
     // Hide/Show Bound to the arrow button
     //Nav is repsonsive to smaller screen sizes
 var isNavVisible = true;
 function noNav() {
-    $("#search-nav").animate({
+    $('#search-nav').animate({
                 height: 0, 
             }, 500);
             setTimeout(function() {
-                $("#search-nav").hide();
+                $('#search-nav').hide();
             }, 500);    
-            $("#arrow").attr("src", "img/down-arrow.gif");
+            $('#arrow').attr('src', 'img/down-arrow.gif');
             isNavVisible = false;
 }
 function yesNav() {
-    $("#search-nav").show();
-            var scrollerHeight = $("#scroller").height() + 55;
+    $('#search-nav').show();
+            var scrollerHeight = $('#scroller').height() + 55;
             if($(window).height() < 600) {
-                $("#search-nav").animate({
+                $('#search-nav').animate({
                     height: scrollerHeight - 100,
                 }, 500, function() {
-                    $(this).css('height','auto').css("max-height", 439);
+                    $(this).css('height','auto').css('max-height', 439);
                 });  
             } else {
-            $("#search-nav").animate({
+            $('#search-nav').animate({
                 height: scrollerHeight,
             }, 500, function() {
-                $(this).css('height','auto').css("max-height", 549);
+                $(this).css('height','auto').css('max-height', 549);
             });
             }
-            $("#arrow").attr("src", "img/up-arrow.gif");
+            $('#arrow').attr('src', 'img/up-arrow.gif');
             isNavVisible = true;
 }
 
@@ -193,11 +184,11 @@ function hideNav() {
             yesNav();  
     }
 }
-$("#arrow").click(hideNav);
+$('#arrow').click(hideNav);
 
 //Hide Nav if screen width is resized to < 850 or height < 595
 //Show Nav if screen is resized to >= 850 or height is >= 595
-    //Function is run when window is resized
+//Function is run when window is resized
 $(window).resize(function() {
     var windowWidth = $(window).width();
     if ($(window).width() < 850 && isNavVisible === true) {
