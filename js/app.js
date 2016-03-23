@@ -1,4 +1,8 @@
 
+var markers = [];
+function googleError(){
+    alert("Google Maps Loading failed!");
+}
       function initMap() {
         var bounds = new google.maps.LatLngBounds();
         var map = new google.maps.Map(document.getElementById('map-canvas'), {
@@ -10,9 +14,7 @@
         if($(window).width() <= 1080) {
         map.setZoom(16);
     }
-    if ($(window).width() < 850 || $(window).height() < 595) {
-        hideNav();
-    }
+    
 
     function resetMap() {
         var windowWidth = $(window).width();
@@ -29,7 +31,13 @@
     }); 
     map.fitBounds(bounds);
 
-       $.getJSON('https://usnationalparks.firebaseio.com/parks.json',function(loc){
+    var parksRequestTimeout = setTimeout(function(){
+               alert("failed to get national parks data");
+    },8000);
+      $.ajax({
+        url: 'https://usnationalparks.firebaseio.com/parks.json',
+        dataType: 'json',
+        success: function(loc){
         for (var i = 0; i< loc.length; i++){
         var position = new google.maps.LatLng(loc[i].lat, loc[i].lng);
         bounds.extend(position);
@@ -55,28 +63,38 @@
             anchor: new google.maps.Point(12.5, 40)
             }
         });
+        markers.push(loc[i].holdMarker);
 
       map.fitBounds(bounds);
+      clearTimeout(parksRequestTimeout);
      
       new google.maps.event.addListener(loc[i].holdMarker, 'click', (function(marker, i) {
        
           return function() {
             var airportUrl = 'https://airport.api.aero/airport/nearest/'+loc[i].lat+'/'+loc[i].lng+'?user_key=b26562a6792b0ee4bc5c786291c86714';
+            var airRequestTimeout = setTimeout(function(){
+               alert('Failed to get airports data');
 
-             $.getJSON(airportUrl, function(data) {
+                  },8000);
+             $.ajax({
+                  url: airportUrl,
+                  dataType: 'json',
+                  success: function(data){
+             
        
             var content = '<img height="250" width="350" src="' + loc[i].image + 
                                     '" alt="Image of ' + loc[i].name + '"><br><hr style="margin-bottom: 5px"><strong>' + 
                                     loc[i].name+ ', '+loc[i].state+'</strong><br><p>'+'<a class="web-links" href="'+loc[i].url+'" target="_blank">'+loc[i].url+
                                     '</a><h5><img height="20" width="20" src="img/Black_Plane.png">'+data.airports[0].name+','+data.airports[0].city+
                                     ' <img height="20" width="20" src="img/time.png">'+data.airports[0].timezone+'</h5>';
+
                                     
 
             infowindow.setContent(content);
             infowindow.open(map,marker);
-            marker.setAnimation(google.maps.Animation.BOUNCE);
+            //marker.setAnimation(google.maps.Animation.BOUNCE);
             new google.maps.event.addListener(infowindow,'closeclick',function(){
-             marker.setAnimation(null);
+             
              resetMap();
             });
             var windowWidth = $(window).width();
@@ -87,18 +105,23 @@
             }
             map.setCenter(marker.position);
             loc[i].picBoolTest = true;
-            });
+           clearTimeout(airRequestTimeout);
+            }
+        });
           }; 
           })(loc[i].holdMarker, i));
+
 }
+
   
       //Click nav element to zoom in and center location on click
 var viewModel = {
     query: ko.observable(''),
+    filteredList : ko.observableArray(markers),
     clickOpenMap: function(marker){
         $('#input').val('');
         var position = new google.maps.LatLng(marker.lat, marker.lng) ;  
-        var marker = new google.maps.Marker({
+        var location = new google.maps.Marker({
           position: position,
           map: map,
           title: marker.name,
@@ -110,54 +133,28 @@ var viewModel = {
             }
         });
     
-      
-    map.panTo(marker.position);
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-     setTimeout(function() {marker.setMap(null);
-     }, 1500);
-}
-    
-};
-
-
-viewModel.loc = ko.dependentObservable(function() {
-    var self = this;
-    var search = self.query().toLowerCase();
-    return ko.utils.arrayFilter(loc, function(marker) {
-      if (marker.name.toLowerCase().indexOf(search) >= 0) {
-            marker.boolTest = true;
-            marker.visible = true;
-            return marker.visible;
-        } else {
-            marker.boolTest = false;
-            marker.visible = false;
-            return marker.visible;
-        }
-    });       
-}, viewModel);
-
-
-ko.applyBindings(viewModel);
-});
-}
-   
-
-    //Hide and Show entire Nav/Search Bar on click
-    // Hide/Show Bound to the arrow button
-    //Nav is repsonsive to smaller screen sizes
-var isNavVisible = true;
-function noNav() {
-    $('#search-nav').animate({
-                height: 0, 
-            }, 500);
-            setTimeout(function() {
-                $('#search-nav').hide();
-            }, 500);    
-            $('#arrow').attr('src', 'img/down-arrow.gif');
-            isNavVisible = false;
+    var content = '<img height="250" width="350" src="' + marker.image + 
+                                    '" alt="Image of ' + marker.name + '"><br><hr style="margin-bottom: 5px"><strong>' + 
+                                    marker.name+ ', '+marker.state+'</strong><br><p>'+'<a class="web-links" href="'+marker.url+'" target="_blank">'+marker.url+
+                                    '</a>';
+    map.panTo(location.position);
+    infowindow.setContent(content);
+    infowindow.open(map,location);
+    map.setZoom(10); 
+     new google.maps.event.addListener(infowindow,'closeclick',function(){
+             location.setMap(null);
+             resetMap();
+            });
+},
+closeOpenList: function(){                   //Hide and Show entire Nav/Search Bar on click
+ var imgNav = $('#arrow').attr('src');       // Hide/Show Bound to the arrow button
+ function noNav() {
+    $('#search-nav').hide();
+    $('#arrow').attr('src', 'img/down-arrow.gif'); //Nav is repsonsive to smaller screen sizes
 }
 function yesNav() {
     $('#search-nav').show();
+    $('#arrow').attr('src', 'img/up-arrow.gif');
             var scrollerHeight = $('#scroller').height() + 55;
             if($(window).height() < 600) {
                 $('#search-nav').animate({
@@ -173,38 +170,50 @@ function yesNav() {
             });
             }
             $('#arrow').attr('src', 'img/up-arrow.gif');
-            isNavVisible = true;
 }
 
 function hideNav() {
-    if(isNavVisible === true) {
+    if(imgNav === "img/up-arrow.gif") {
             noNav();
             
     } else {
             yesNav();  
     }
 }
-$('#arrow').click(hideNav);
+hideNav();
 
-//Hide Nav if screen width is resized to < 850 or height < 595
-//Show Nav if screen is resized to >= 850 or height is >= 595
-//Function is run when window is resized
-$(window).resize(function() {
-    var windowWidth = $(window).width();
-    if ($(window).width() < 850 && isNavVisible === true) {
-            noNav();
-        } else if($(window).height() < 595 && isNavVisible === true) {
-            noNav();
+}
+    
+};
+
+
+viewModel.loc = ko.computed(function() {
+    var self = this;
+    var search = self.query().toLowerCase();
+    return ko.utils.arrayFilter(loc, function(marker) {
+    
+      if (marker.name.toLowerCase().indexOf(search) >= 0){
+            
+            marker.visible = true;
+            return marker.visible;
+        } 
+        else {
+            
+             marker.visible = false;
+            return marker.visible;
         }
-    if ($(window).width() >= 850 && isNavVisible === false) {
-            if($(window).height() > 595) {
-                yesNav();
-            }
-        } else if($(window).height() >= 595 && isNavVisible === false) {
-            if($(window).width() > 850) {
-                yesNav();
-            }     
-        }    
-});
+    
+    });       
+},viewModel);
 
+
+
+
+
+ko.applyBindings(viewModel);
+
+}
+});
+}
+   
     
