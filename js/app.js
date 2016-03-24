@@ -39,7 +39,7 @@ function googleError(){
     },8000);
       $.ajax({
         url: 'https://usnationalparks.firebaseio.com/parks.json',
-        dataType: 'json',
+        dataType: 'jsonp',
         success: function(loc){
         for (var i = 0; i< loc.length; i++){
         var position = new google.maps.LatLng(loc[i].lat, loc[i].lng);
@@ -81,7 +81,7 @@ function googleError(){
                   },8000);
              $.ajax({
                   url: airportUrl,
-                  dataType: 'json',
+                  dataType: 'jsonp',
                   success: function(data){
              
        
@@ -95,8 +95,7 @@ function googleError(){
 
             infowindow.setContent(content);
             infowindow.open(map,marker);
-            //marker.setAnimation(google.maps.Animation.BOUNCE);
-            new google.maps.event.addListener(infowindow,'closeclick',function(){
+            google.maps.event.addListener(infowindow,'closeclick',function(){
              
              resetMap();
             });
@@ -142,7 +141,7 @@ var viewModel = {
                   },8000);
              $.ajax({
                   url: airportUrl,
-                  dataType: 'json',
+                  dataType: 'jsonp',
                   success: function(data){
     var content = '<img height="250" width="350" src="' + marker.image + 
                                     '" alt="Image of ' + marker.name + '"><br><hr style="margin-bottom: 5px"><strong>' + 
@@ -230,7 +229,7 @@ viewModel.filterMarkers = ko.computed(function() {
     for (var i=0; i < pin.length; i++){
       var mypark = self.query().toLowerCase();
       if(pin[i].title.toLowerCase().indexOf(mypark) >= 0){
-      
+         pin[i].setMap(map);
        }
     else{
       pin[i].setMap(null);
