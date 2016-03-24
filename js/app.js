@@ -1,3 +1,6 @@
+/*Javascript containing all functions to call national parks data from Firebase and nearest airports data from
+SITA API and displaying them using Google Maps API */
+
 
 var markers = [];
 function googleError(){
@@ -58,7 +61,7 @@ function googleError(){
           title: loc[i].name,
           icon: {
             url: 'img/tree.png',
-            size: new google.maps.Size(100, 50),
+            size: new google.maps.Size(50, 50),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(12.5, 40)
             }
@@ -114,10 +117,10 @@ function googleError(){
 }
 
   
-      //Click nav element to zoom in and center location on click
+//Click nav element to zoom in and center location on click
 var viewModel = {
-    query: ko.observable(''),
-    filteredList : ko.observableArray(markers),
+    query: ko.observable(''),                  
+    filteredList : ko.observableArray(markers), 
     clickOpenMap: function(marker){
         $('#input').val('');
         var position = new google.maps.LatLng(marker.lat, marker.lng) ;  
@@ -127,16 +130,26 @@ var viewModel = {
           title: marker.name,
           icon: {
             url: 'img/tree.png',
-            size: new google.maps.Size(100, 50),
+            size: new google.maps.Size(50, 50),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(12.5, 40)
             }
         });
-    
+    var airportUrl = 'https://airport.api.aero/airport/nearest/'+marker.lat+'/'+marker.lng+'?user_key=b26562a6792b0ee4bc5c786291c86714';
+            var airRequestTimeout2 = setTimeout(function(){
+               alert('Failed to get airports data');
+
+                  },8000);
+             $.ajax({
+                  url: airportUrl,
+                  dataType: 'json',
+                  success: function(data){
     var content = '<img height="250" width="350" src="' + marker.image + 
                                     '" alt="Image of ' + marker.name + '"><br><hr style="margin-bottom: 5px"><strong>' + 
                                     marker.name+ ', '+marker.state+'</strong><br><p>'+'<a class="web-links" href="'+marker.url+'" target="_blank">'+marker.url+
-                                    '</a>';
+                                    '</a><h5><img height="20" width="20" src="img/Black_Plane.png">'+data.airports[0].name+','+data.airports[0].city+
+                                    ' <img height="20" width="20" src="img/time.png">'+data.airports[0].timezone+'</h5>';
+    clearTimeout(airRequestTimeout2);
     map.panTo(location.position);
     infowindow.setContent(content);
     infowindow.open(map,location);
@@ -144,18 +157,21 @@ var viewModel = {
      new google.maps.event.addListener(infowindow,'closeclick',function(){
              location.setMap(null);
              resetMap();
+             window.location.reload(true);
             });
+   }
+ });
 },
 closeOpenList: function(){                   //Hide and Show entire Nav/Search Bar on click
  var imgNav = $('#arrow').attr('src');       // Hide/Show Bound to the arrow button
  function noNav() {
     $('#search-nav').hide();
-    $('#arrow').attr('src', 'img/down-arrow.gif'); //Nav is repsonsive to smaller screen sizes
+    $('#arrow').attr('src', 'img/down-arrow.gif'); 
 }
 function yesNav() {
     $('#search-nav').show();
     $('#arrow').attr('src', 'img/up-arrow.gif');
-            var scrollerHeight = $('#scroller').height() + 55;
+            var scrollerHeight = $('#scroller').height() + 55;       //Nav is repsonsive to smaller screen sizes
             if($(window).height() < 600) {
                 $('#search-nav').animate({
                     height: scrollerHeight - 100,
@@ -186,7 +202,7 @@ hideNav();
     
 };
 
-
+// filter search locations in the list view
 viewModel.loc = ko.computed(function() {
     var self = this;
     var search = self.query().toLowerCase();
@@ -206,9 +222,23 @@ viewModel.loc = ko.computed(function() {
     });       
 },viewModel);
 
+// filter map markers with list view
 
+viewModel.filterMarkers = ko.computed(function() {
+    var self = this;
+    var pin = self.filteredList();
+    for (var i=0; i < pin.length; i++){
+      var mypark = self.query().toLowerCase();
+      if(pin[i].title.toLowerCase().indexOf(mypark) >= 0){
+      
+       }
+    else{
+      pin[i].setMap(null);
+      
+    }
+   }
 
-
+},viewModel);
 
 ko.applyBindings(viewModel);
 

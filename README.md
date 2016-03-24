@@ -2,7 +2,8 @@
 By: Kabita Chatterjee
 
 Download the repo and run the Maps.html file in your browser.
-Please enable the plug-in <strong>Cross origin resource sharing</strong> in chrome browser.
+Please enable the extension <strong>Cross origin resource sharing</strong> in chrome browser.<br/>
+<strong>https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en</strong>
 
 Basic Description
 This project is using Google Maps API to display a few National Parks in USA<br/>
