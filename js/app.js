@@ -71,7 +71,7 @@ function googleError(){
       map.fitBounds(bounds);
       clearTimeout(parksRequestTimeout);
      
-      new google.maps.event.addListener(loc[i].holdMarker, 'click', (function(marker, i) {
+       google.maps.event.addListener(loc[i].holdMarker, 'click', (function(marker, i) {
        
           return function() {
             var airportUrl = 'https://airport.api.aero/airport/nearest/'+loc[i].lat+'/'+loc[i].lng+'?user_key=b26562a6792b0ee4bc5c786291c86714';
@@ -153,7 +153,7 @@ var viewModel = {
     infowindow.setContent(content);
     infowindow.open(map,location);
     map.setZoom(10); 
-     new google.maps.event.addListener(infowindow,'closeclick',function(){
+      google.maps.event.addListener(infowindow,'closeclick',function(){
              location.setMap(null);
              resetMap();
              window.location.reload(true);
