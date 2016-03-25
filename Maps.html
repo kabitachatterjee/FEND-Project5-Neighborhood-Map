@@ -9,7 +9,7 @@
   <body>
     <div id="map-canvas"></div>
     <div id="search-container">
-        <div id="search-nav">    
+        <div id="search-nav">
             <input id="input" placeholder="Search…" data-bind="textInput: query, valueUpdate: 'keydown'" autocomplete="off"></input>
             <div id="scroller">
                 <ul  data-bind='template: {name: "marker", foreach:loc}'>
@@ -31,13 +31,11 @@
             <img id="arrow" data-bind="click:closeOpenList" src="img/up-arrow.gif" alt="arrow image">
         </div>
          </div>
-
-    
-    <script async defer 
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUkUqR2r2dfMNgribh4X8XjorobxHTMYA&v=3&callback=initMap" onerror="googleError()">
-    </script>
     <script src="libs/jquery.min.js"></script>
     <script src="libs/knockout-3.2.0.js"></script>
     <script src="js/app.js"></script>
+    <script async defer 
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUkUqR2r2dfMNgribh4X8XjorobxHTMYA&v=3&callback=initMap" onerror="googleError()">
+    </script>
   </body>
 </html>
